@@ -70,7 +70,7 @@ void ISR_button2() {
   // Logika za tipkalo 2
 }
 ```
-      - `sei()` se koristi unutar ISR-a da omogući "nested interrupts". Ova linija omogućava obradu drugih prekida dok je jedan ISR aktivan, čime se omogućava da važniji prekidi (s višim prioritetom) ne budu blokirani od strane onih s nižim prioritetom.
+- `sei()` se koristi unutar ISR-a da omogući "nested interrupts". Ova linija omogućava obradu drugih prekida dok je jedan ISR aktivan, čime se omogućava da važniji prekidi (s višim prioritetom) ne budu blokirani od strane onih s nižim prioritetom.
 
 ```cpp
 // ISR za Echo signal s HC-SR04 (detektira reflektirani val) - Najviši prioritet
@@ -93,7 +93,7 @@ else {
 }
 }
 ```
-      - `nested_occured` flag služi za praćenje situacija kada jedan prekid (npr. `ISR_sensor()`) preklapa drugi prekid (npr. `ISR(TIMER1_COMPA_vect)`). Ovdje je važno da se svi prekidi pravilo obrade bez ometanja važnijih zadataka.
+- `nested_occured` flag služi za praćenje situacija kada jedan prekid (npr. `ISR_sensor()`) preklapa drugi prekid (npr. `ISR(TIMER1_COMPA_vect)`). Ovdje je važno da se svi prekidi pravilo obrade bez ometanja važnijih zadataka.
 
 
 
