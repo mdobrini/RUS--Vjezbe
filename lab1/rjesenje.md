@@ -100,7 +100,22 @@ else {
 
 
 ##### Efikasno upravljanje resursima  
-- [ ] Spriječiti konflikte pristupa resursima korištenjem odgovarajućih mehanizama (semafori, kritične sekcije, zastavice)  
+- [x] Spriječiti konflikte pristupa resursima korištenjem odgovarajućih mehanizama (semafori, kritične sekcije, zastavice)
+
+- Zaštićene sekcije koriste funckije `noInterrupts()` i `interrupts()`. Ove funkcije omogućuju da se prekidi onemoguće dok se čita ili mijenja kritična globalna varijabla, čime se sprječava istovremeni pristup iz različitih ISR funkcija.
+- Zastavice poput `button2_pressed`, `sensor_triggered`, i `timer_flag` koriste se za signalizaciju da su događaji u prekidu obradeni. Ove zastavice se postavljaju unutar ISR-a i čitaju u glavnoj petlji `loop().` Korištenjem kritičnih sekcija, osigurava se da samo jedna ISR može pristupiti i postaviti te zastavice u isto vrijeme.
+
+  ```cpp
+  void ISR_sensor() {
+  sei(); // Omogući nested interrupts
+  noInterrupts(); // Onemogući prekide dok mijenjamo flag
+  sensor_triggered = true;  // Postavi flag za signalizaciju
+  nested_occurred = true;  // Označava preklapanje
+  interrupts();  // Omogući prekide
+}
+
+  ```
+```  
 - [ ] Minimizirati vrijeme izvršavanja ISR funkcija kako bi se izbjegle blokade drugih prekida  
 
 ##### Demonstracija rada s vanjskim sklopovima  
