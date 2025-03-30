@@ -160,9 +160,25 @@ void ISR_sensor() {
 Ova logika omogućava sustavu da obradi najvažnije događaje u prvom redu, dok se manje važni događaji mogu odgoditi.
 
 ##### Dokumentacija i testiranje  
-- [ ] Jasno dokumentirati način rada programa, uključujući opis svakog prekida i njegovog prioriteta  
-- [ ] Provesti testove kako bi se osiguralo pravilno reagiranje sustava na različite događaje  
+- [x] Jasno dokumentirati način rada programa, uključujući opis svakog prekida i njegovog prioriteta  
+- [x] Provesti testove kako bi se osiguralo pravilno reagiranje sustava na različite događaje  
 
 #### Dodatni zahtjevi (po izboru jedan)  
-- [ ] Implementirati mehanizam detekcije i rješavanja situacija gdje se višestruki prekidi javljaju istovremeno  
+- [x] Implementirati mehanizam detekcije i rješavanja situacija gdje se višestruki prekidi javljaju istovremeno
+      
+1. **Flag za detekciju preklapanja (`nested_occurred`)**
+   - U kodu je definiran flag `nested_occurred` koji signalizira da se prekid visokog prioriteta (npr. **ECHO prekid**) dogodio **unutar** obrade prekida nižeg prioriteta (npr. **Timer1**).
+   - Ovaj flag se koristi za bilježenje i kasniju obradu preklapanja u `loop()` funkciji.
+
+   ```cpp
+   volatile bool nested_occurred = false; // Flag za detekciju preklapanja prekida
+
+   // ISR za ECHO signal (detektira reflektirani signal)
+   void ISR_sensor() {
+     sei();  // Omogući nested interrupts
+     sensor_triggered = true;
+     nested_occurred = true;  // Detektiraj preklapanje
+   }
+
+  
 - [ ] Koristiti DMA (Direct Memory Access) ako je dostupno kako bi se smanjio utjecaj prekida na glavni procesor  
