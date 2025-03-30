@@ -140,22 +140,22 @@ void ISR_sensor() {
 - [x] Implementirati logiku koja pokazuje kako različiti prioriteti utječu na obradu događaja
     - U ovom kodu implementirani su prekidi s različitim prioritetima, koji utječu na redoslijed obrade događaja:
 
- 1. **ECHO Prekid (INT0) - Najviši prioritet**
-   - Prekid za **ECHO** signal s ultrazvučnog senzora ima najviši prioritet. Kada se dogodi, odmah se obrađuje, čak i ako su drugi prekidi aktivirani.
+ 1. `ECHO` Prekid (`INT0`) - Najviši prioritet
+   - Prekid za `ECHO` signal s ultrazvučnog senzora ima najviši prioritet. Kada se dogodi, odmah se obrađuje, čak i ako su drugi prekidi aktivirani.
    - **Primjer:** Ako senzor detektira reflektirani signal, ovaj prekid se odmah obrađuje.
 
- 2. **BUTTON2 Prekid (INT1) - Srednji prioritet**
-   - Prekid za **BUTTON2** omogućuje trigiranje ultrazvučnog impulsa, i obrađuje se nakon **ECHO** prekida, ali prije **Timer1** prekida.
+ 2. `BUTTON2` Prekid (`INT1`) - Srednji prioritet
+   - Prekid za `BUTTON2` omogućuje trigiranje ultrazvučnog impulsa, i obrađuje se nakon `ECHO` prekida, ali prije `Timer1` prekida.
    - **Primjer:** Ako korisnik pritisne tipkalo, signalizira se prekid koji pokreće senzor, ali neće ometati već pokrenute visoko prioritetne prekide.
 
- 3. **Timer1 Prekid - Najniži prioritet**
-   - **Timer1** prekid upravlja treptanjem LED diode svake sekunde i ima najniži prioritet. Bit će odgođen ako su aktivni prekidi s višim prioritetima (npr. **ECHO** ili **BUTTON2**).
+ 3. `Timer1` Prekid - Najniži prioritet
+   - `Timer1` prekid upravlja treptanjem LED diode svake sekunde i ima najniži prioritet. Bit će odgođen ako su aktivni prekidi s višim prioritetima (npr. `ECHO` ili `BUTTON2`).
    - **Primjer:** LED dioda neće treptati ako se u isto vrijeme dogodi važniji prekid.
 
 ### Ključna logika:
-- **ECHO prekid** ima najviši prioritet i uvijek će biti obrađen prvo.
-- **BUTTON2 prekid** ima srednji prioritet i obrađuje se nakon **ECHO** prekida, ali prije **Timer1**.
-- **Timer1 prekid** (najniži prioritet) može biti odgođen zbog važnijih prekida.
+- `ECHO` prekid ima najviši prioritet i uvijek će biti obrađen prvo.
+- `BUTTON2` prekid ima srednji prioritet i obrađuje se nakon `ECHO` prekida, ali prije `Timer1`.
+- `Timer1` prekid (najniži prioritet) može biti odgođen zbog važnijih prekida.
 
 Ova logika omogućava sustavu da obradi najvažnije događaje u prvom redu, dok se manje važni događaji mogu odgoditi.
 
