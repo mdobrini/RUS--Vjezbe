@@ -14,9 +14,9 @@
 attachInterrupt(digitalPinToInterrupt(BUTTON2), ISR_button2, FALLING);
 ```
   - [x] Aktivaciju internih timera
-- Timer1 je kofiguriran za CTC mod (Clear Timer on Compare Match)
-- Postavljen je da generira prekid svake sekunde (1hz) pomoću `OCR1A = 15624`
-- Kada dođe do match-a, poziva se ISR `TIMER1_COMPA_vect`, gdje se postavlja `timer_flag = true`, a LED-ica trepće u `loop()`
+      - Timer1 je kofiguriran za CTC mod (Clear Timer on Compare Match)
+      - Postavljen je da generira prekid svake sekunde (1hz) pomoću `OCR1A = 15624`
+      - Kada dođe do match-a, poziva se ISR `TIMER1_COMPA_vect`, gdje se postavlja `timer_flag = true`, a LED-ica trepće u `loop()`
 
 ```cpp
 ISR(TIMER1_COMPA_vect) {
@@ -25,9 +25,9 @@ ISR(TIMER1_COMPA_vect) {
 
 ```
   - [x] Očitavanje različitih senzora
-- Koristi se `HC-SR04` ultrazvučni senzor.
-- ISR `ISR_sensor` se aktivira na RISING rub Echo pina, kad se signal vrati s prepreke.
-- Ovdje se ne mjeri udaljenost, nego se detektira prisustvo reflektiranog signala putem prekida.
+      - Koristi se `HC-SR04` ultrazvučni senzor.
+      - ISR `ISR_sensor` se aktivira na RISING rub Echo pina, kad se signal vrati s prepreke.
+      - Ovdje se ne mjeri udaljenost, nego se detektira prisustvo reflektiranog signala putem prekida.
 ```cpp
 attachInterrupt(digitalPinToInterrupt(ECHO), ISR_sensor, RISING);
 
@@ -37,9 +37,9 @@ void ISR_sensor() {
 
 ```  
   - [x] Serijsku komunikaciju ili druge vanjske prekide
-- `serialEvent()` je automatski pozvana funkcija kad stigne novi podatak putem serijske komunikacije.
-- Iako nije "klasičan" ISR, ponaša se kao softverski prekid povezan s UART-om.
-- Obrađuje podatke pristigle preko USB serijske veze s računalom.
+      - `serialEvent()` je automatski pozvana funkcija kad stigne novi podatak putem serijske komunikacije.
+      - Iako nije "klasičan" ISR, ponaša se kao softverski prekid povezan s UART-om.
+      - Obrađuje podatke pristigle preko USB serijske veze s računalom.
 ```cpp
 void serialEvent() {
   while (Serial.available()) {
@@ -53,8 +53,8 @@ void serialEvent() {
 
 ##### Postavljanje prioriteta prekida  
 - [x] Postaviti različite prioritete za prekide kako bi važniji događaji imali prednost pri obradi
-- Postavljanje različitih prioriteta rješava se korištenjem vanjskih prekida `INT0` i `INT1`. Prioritet tih prekida ovisi o hardverskoj konfiguraciji mikrokontrolera, gdje `INT0` ima viši prioritet od `INT1`, što znači da će ISR za `ECHO` biti obrađen prije ISR za `BUTTON2`.
-- Timer prekid `TIMER1` je konfiguriran za treći nivi prioriteta -> izvršava se nakon vanjskih prekida, jer je postavljen an najniži među tri glavna prekida.
+      - Postavljanje različitih prioriteta rješava se korištenjem vanjskih prekida `INT0` i `INT1`. Prioritet tih prekida ovisi o hardverskoj konfiguraciji mikrokontrolera, gdje `INT0` ima viši prioritet od `INT1`, što znači da će ISR za `ECHO` biti obrađen prije ISR za `BUTTON2`.
+      - Timer prekid `TIMER1` je konfiguriran za treći nivi prioriteta -> izvršava se nakon vanjskih prekida, jer je postavljen an najniži među tri glavna prekida.
 ```cpp
 // Vanjski prekidi
 attachInterrupt(digitalPinToInterrupt(BUTTON2), ISR_button2, FALLING); // INT1
@@ -62,7 +62,7 @@ attachInterrupt(digitalPinToInterrupt(ECHO), ISR_sensor, RISING);      // INT0
 ```
       
 - [x] Omogućiti preklapanje prekida (nested interrupts) ako razvojna platforma podržava tu funkcionalnost
-- Dok se obrada jednog prekida vrši, drugi prekid može biti pozvan i odmah obrađen. Za to se koristi funkcija `sei()` unutar ISR-ova, koja omogućava da se prekidi ne blokiraju međusobno.
+      - Dok se obrada jednog prekida vrši, drugi prekid može biti pozvan i odmah obrađen. Za to se koristi funkcija `sei()` unutar ISR-ova, koja omogućava da se prekidi ne blokiraju međusobno.
 ```cpp
 // ISR za tipkalo 2 (pokreće slanje ultrazvučnog impulsa) - Srednji prioritet
 void ISR_button2() {
@@ -70,7 +70,7 @@ void ISR_button2() {
   // Logika za tipkalo 2
 }
 ```
-- `sei()` se koristi unutar ISR-a da omogući "nested interrupts". Ova linija omogućava obradu drugih prekida dok je jedan ISR aktivan, čime se omogućava da važniji prekidi (s višim prioritetom) ne budu blokirani od strane onih s nižim prioritetom.
+      - `sei()` se koristi unutar ISR-a da omogući "nested interrupts". Ova linija omogućava obradu drugih prekida dok je jedan ISR aktivan, čime se omogućava da važniji prekidi (s višim prioritetom) ne budu blokirani od strane onih s nižim prioritetom.
 
 ```cpp
 // ISR za Echo signal s HC-SR04 (detektira reflektirani val) - Najviši prioritet
@@ -93,7 +93,7 @@ else {
 }
 }
 ```
-- `nested_occured` flag služi za praćenje situacija kada jedan prekid (npr. `ISR_sensor()`) preklapa drugi prekid (npr. `ISR(TIMER1_COMPA_vect)`). Ovdje je važno da se svi prekidi pravilo obrade bez ometanja važnijih zadataka.
+      - `nested_occured` flag služi za praćenje situacija kada jedan prekid (npr. `ISR_sensor()`) preklapa drugi prekid (npr. `ISR(TIMER1_COMPA_vect)`). Ovdje je važno da se svi prekidi pravilo obrade bez ometanja važnijih zadataka.
 
 
 
