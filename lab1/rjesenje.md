@@ -102,8 +102,8 @@ else {
 ##### Efikasno upravljanje resursima  
 - [x] Spriječiti konflikte pristupa resursima korištenjem odgovarajućih mehanizama (semafori, kritične sekcije, zastavice)
 
-- Zaštićene sekcije koriste funckije `noInterrupts()` i `interrupts()`. Ove funkcije omogućuju da se prekidi onemoguće dok se čita ili mijenja kritična globalna varijabla, čime se sprječava istovremeni pristup iz različitih ISR funkcija.
-- Zastavice poput `button2_pressed`, `sensor_triggered`, i `timer_flag` koriste se za signalizaciju da su događaji u prekidu obradeni. Ove zastavice se postavljaju unutar ISR-a i čitaju u glavnoj petlji `loop().` Korištenjem kritičnih sekcija, osigurava se da samo jedna ISR može pristupiti i postaviti te zastavice u isto vrijeme.
+   - Zaštićene sekcije koriste funckije `noInterrupts()` i `interrupts()`. Ove funkcije omogućuju da se prekidi onemoguće dok se čita ili mijenja kritična globalna varijabla, čime se sprječava istovremeni pristup iz različitih ISR funkcija.
+   - Zastavice poput `button2_pressed`, `sensor_triggered`, i `timer_flag` koriste se za signalizaciju da su događaji u prekidu obradeni. Ove zastavice se postavljaju unutar ISR-a i čitaju u glavnoj petlji `loop().` Korištenjem kritičnih sekcija, osigurava se da samo jedna ISR može pristupiti i postaviti te zastavice u isto vrijeme.
 
   ```cpp
   void ISR_sensor() {
@@ -117,7 +117,7 @@ else {
 
 
 - [x] Minimizirati vrijeme izvršavanja ISR funkcija kako bi se izbjegle blokade drugih prekida
-- Unutar ISR funkcija, samo se najosnovniji poslovi obavljaju, kao što je postavljanje zastavica ili postavljanje stanja za kasniju obradu u glavnoj petlji. Svi zahtijevniji izračuni ili logički procesi  premještaju se izvan ISR funkcija.
+      - Unutar ISR funkcija, samo se najosnovniji poslovi obavljaju, kao što je postavljanje zastavica ili postavljanje stanja za kasniju obradu u glavnoj petlji. Svi zahtijevniji izračuni ili logički procesi  premještaju se izvan ISR funkcija.
 ```cpp
 // ISR za Echo signal s HC-SR04 (detektira reflektirani val) - Najviši prioritet
 void ISR_sensor() {
@@ -130,8 +130,34 @@ void ISR_sensor() {
 
 
 ##### Demonstracija rada s vanjskim sklopovima  
-- [ ] Koristiti dodatne vanjske sklopove (senzore, tipkala, LED diode, serijske module, eksterne kontrolere)  
-- [ ] Implementirati logiku koja pokazuje kako različiti prioriteti utječu na obradu događaja  
+- [x] Koristiti dodatne vanjske sklopove (senzore, tipkala, LED diode, serijske module, eksterne kontrolere)
+   - Ultrazvučni senzor (HC-SR04) za mjerenje udaljenosti
+   - Dva tipkala za korisnički unos i upravlajnje trigeranjem ultrazvučnog senzora
+   - LED dioda za traptanje svakih 1 sekundu pomoću Timer prekida
+   - Serijski modul za ispisivanje na računalo putem serijske komunikacije
+
+
+- [x] Implementirati logiku koja pokazuje kako različiti prioriteti utječu na obradu događaja
+    - U ovom kodu implementirani su prekidi s različitim prioritetima, koji utječu na redoslijed obrade događaja:
+
+ 1. **ECHO Prekid (INT0) - Najviši prioritet**
+   - Prekid za **ECHO** signal s ultrazvučnog senzora ima najviši prioritet. Kada se dogodi, odmah se obrađuje, čak i ako su drugi prekidi aktivirani.
+   - **Primjer:** Ako senzor detektira reflektirani signal, ovaj prekid se odmah obrađuje.
+
+ 2. **BUTTON2 Prekid (INT1) - Srednji prioritet**
+   - Prekid za **BUTTON2** omogućuje trigiranje ultrazvučnog impulsa, i obrađuje se nakon **ECHO** prekida, ali prije **Timer1** prekida.
+   - **Primjer:** Ako korisnik pritisne tipkalo, signalizira se prekid koji pokreće senzor, ali neće ometati već pokrenute visoko prioritetne prekide.
+
+ 3. **Timer1 Prekid - Najniži prioritet**
+   - **Timer1** prekid upravlja treptanjem LED diode svake sekunde i ima najniži prioritet. Bit će odgođen ako su aktivni prekidi s višim prioritetima (npr. **ECHO** ili **BUTTON2**).
+   - **Primjer:** LED dioda neće treptati ako se u isto vrijeme dogodi važniji prekid.
+
+### Ključna logika:
+- **ECHO prekid** ima najviši prioritet i uvijek će biti obrađen prvo.
+- **BUTTON2 prekid** ima srednji prioritet i obrađuje se nakon **ECHO** prekida, ali prije **Timer1**.
+- **Timer1 prekid** (najniži prioritet) može biti odgođen zbog važnijih prekida.
+
+Ova logika omogućava sustavu da obradi najvažnije događaje u prvom redu, dok se manje važni događaji mogu odgoditi.
 
 ##### Dokumentacija i testiranje  
 - [ ] Jasno dokumentirati način rada programa, uključujući opis svakog prekida i njegovog prioriteta  
