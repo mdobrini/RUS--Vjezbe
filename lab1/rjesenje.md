@@ -53,7 +53,8 @@ void serialEvent() {
 
 ##### Postavljanje prioriteta prekida  
 - [x] Postaviti različite prioritete za prekide kako bi važniji događaji imali prednost pri obradi
-      - Postavljanje različitih prioriteta rješava se korištenjem vanjskih prekida `INT0` i `INT1`. Prioritet tih prekida ovisi o hardverskoj konfiguraciji mikrokontrolera, gdje `INT0` ima viši prioritet od `INT1`, što znači da će ISR za `ECHO` biti obrađen prije ISR za `BUTTON2`.
+      
+   - Postavljanje različitih prioriteta rješava se korištenjem vanjskih prekida `INT0` i `INT1`. Prioritet tih prekida ovisi o hardverskoj konfiguraciji mikrokontrolera, gdje `INT0` ima viši prioritet od `INT1`, što znači da će ISR za `ECHO` biti obrađen prije ISR za `BUTTON2`.
       - Timer prekid `TIMER1` je konfiguriran za treći nivi prioriteta -> izvršava se nakon vanjskih prekida, jer je postavljen an najniži među tri glavna prekida.
 ```cpp
 // Vanjski prekidi
@@ -62,7 +63,8 @@ attachInterrupt(digitalPinToInterrupt(ECHO), ISR_sensor, RISING);      // INT0
 ```
       
 - [x] Omogućiti preklapanje prekida (nested interrupts) ako razvojna platforma podržava tu funkcionalnost
-      - Dok se obrada jednog prekida vrši, drugi prekid može biti pozvan i odmah obrađen. Za to se koristi funkcija `sei()` unutar ISR-ova, koja omogućava da se prekidi ne blokiraju međusobno.
+      
+   - Dok se obrada jednog prekida vrši, drugi prekid može biti pozvan i odmah obrađen. Za to se koristi funkcija `sei()` unutar ISR-ova, koja omogućava da se prekidi ne blokiraju međusobno.
 ```cpp
 // ISR za tipkalo 2 (pokreće slanje ultrazvučnog impulsa) - Srednji prioritet
 void ISR_button2() {
