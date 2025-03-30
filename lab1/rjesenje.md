@@ -112,11 +112,22 @@ else {
   sensor_triggered = true;  // Postavi flag za signalizaciju
   nested_occurred = true;  // Označava preklapanje
   interrupts();  // Omogući prekide
-}
-
+  }
   ```
-```  
-- [ ] Minimizirati vrijeme izvršavanja ISR funkcija kako bi se izbjegle blokade drugih prekida  
+
+
+- [x] Minimizirati vrijeme izvršavanja ISR funkcija kako bi se izbjegle blokade drugih prekida
+- Unutar ISR funkcija, samo se najosnovniji poslovi obavljaju, kao što je postavljanje zastavica ili postavljanje stanja za kasniju obradu u glavnoj petlji. Svi zahtijevniji izračuni ili logički procesi  premještaju se izvan ISR funkcija.
+```cpp
+// ISR za Echo signal s HC-SR04 (detektira reflektirani val) - Najviši prioritet
+void ISR_sensor() {
+  sei();  // Omogući nested interrupts
+  sensor_triggered = true;  // Signaliziraj detektirani signal
+  nested_occurred = true;   // Označava preklapanje
+}
+```
+
+
 
 ##### Demonstracija rada s vanjskim sklopovima  
 - [ ] Koristiti dodatne vanjske sklopove (senzore, tipkala, LED diode, serijske module, eksterne kontrolere)  
