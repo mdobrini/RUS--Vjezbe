@@ -1,13 +1,13 @@
-### Upravljanje višestrukim prekidima i njihovim prioritetima  
+# Upravljanje višestrukim prekidima i njihovim prioritetima  
 
-#### Cilj zadatka  
+### Cilj zadatka  
 - [x] Proučiti koncept višestrukih prekida i njihovih prioriteta na odabranom procesoru
       Korišten je procesor: 
 - [x] Implementirati program koji efikasno upravlja različitim događajima koristeći odgovarajuće strategije rukovanja prekidima  
 
-#### Rjesenje zadataka  
+# Rjesenje zadataka  
 
-##### Implementacija višestrukih interrupta  
+## Implementacija višestrukih interrupta  
 - [x] Definirati i implementirati više prekidnih rutina (ISR – Interrupt Service Routines) koje će reagirati na različite događaje:  
   - [x] Pritisak različitih tipkala  
 ```cpp
@@ -51,7 +51,7 @@ void serialEvent() {
 
 ```
 
-##### Postavljanje prioriteta prekida  
+## Postavljanje prioriteta prekida  
 - [x] Postaviti različite prioritete za prekide kako bi važniji događaji imali prednost pri obradi
       
    - Postavljanje različitih prioriteta rješava se korištenjem vanjskih prekida `INT0` i `INT1`. Prioritet tih prekida ovisi o hardverskoj konfiguraciji mikrokontrolera, gdje `INT0` ima viši prioritet od `INT1`, što znači da će ISR za `ECHO` biti obrađen prije ISR za `BUTTON2`.
@@ -99,7 +99,7 @@ else {
 
 
 
-##### Efikasno upravljanje resursima  
+## Efikasno upravljanje resursima  
 - [x] Spriječiti konflikte pristupa resursima korištenjem odgovarajućih mehanizama (semafori, kritične sekcije, zastavice)
 
    - Zaštićene sekcije koriste funckije `noInterrupts()` i `interrupts()`. Ove funkcije omogućuju da se prekidi onemoguće dok se čita ili mijenja kritična globalna varijabla, čime se sprječava istovremeni pristup iz različitih ISR funkcija.
@@ -129,7 +129,7 @@ void ISR_sensor() {
 
 
 
-##### Demonstracija rada s vanjskim sklopovima  
+## Demonstracija rada s vanjskim sklopovima  
 - [x] Koristiti dodatne vanjske sklopove (senzore, tipkala, LED diode, serijske module, eksterne kontrolere)
    - Ultrazvučni senzor (HC-SR04) za mjerenje udaljenosti
    - Dva tipkala za korisnički unos i upravlajnje trigeranjem ultrazvučnog senzora
@@ -152,18 +152,18 @@ void ISR_sensor() {
    - `Timer1` prekid upravlja treptanjem LED diode svake sekunde i ima najniži prioritet. Bit će odgođen ako su aktivni prekidi s višim prioritetima (npr. `ECHO` ili `BUTTON2`).
    - **Primjer:** LED dioda neće treptati ako se u isto vrijeme dogodi važniji prekid.
 
-### Ključna logika:
+#### Ključna logika:
 - `ECHO` prekid ima najviši prioritet i uvijek će biti obrađen prvo.
 - `BUTTON2` prekid ima srednji prioritet i obrađuje se nakon `ECHO` prekida, ali prije `Timer1`.
 - `Timer1` prekid (najniži prioritet) može biti odgođen zbog važnijih prekida.
 
 Ova logika omogućava sustavu da obradi najvažnije događaje u prvom redu, dok se manje važni događaji mogu odgoditi.
 
-##### Dokumentacija i testiranje  
+## Dokumentacija i testiranje  
 - [x] Jasno dokumentirati način rada programa, uključujući opis svakog prekida i njegovog prioriteta  
 - [x] Provesti testove kako bi se osiguralo pravilno reagiranje sustava na različite događaje  
 
-#### Dodatni zahtjevi (po izboru jedan)  
+## Dodatni zahtjevi (po izboru jedan)  
 - [x] Implementirati mehanizam detekcije i rješavanja situacija gdje se višestruki prekidi javljaju istovremeno
       
 1. **Flag za detekciju preklapanja (`nested_occurred`)**
