@@ -3,7 +3,7 @@
 #### Cilj zadatka  
 - [x] Proučiti koncept višestrukih prekida i njihovih prioriteta na odabranom procesoru
       Korišten je procesor: 
-- [ ] Implementirati program koji efikasno upravlja različitim događajima koristeći odgovarajuće strategije rukovanja prekidima  
+- [x] Implementirati program koji efikasno upravlja različitim događajima koristeći odgovarajuće strategije rukovanja prekidima  
 
 #### Rjesenje zadataka  
 
@@ -52,8 +52,50 @@ void serialEvent() {
 ```
 
 ##### Postavljanje prioriteta prekida  
-- [ ] Postaviti različite prioritete za prekide kako bi važniji događaji imali prednost pri obradi  
-- [ ] Omogućiti preklapanje prekida (nested interrupts) ako razvojna platforma podržava tu funkcionalnost  
+- [x] Postaviti različite prioritete za prekide kako bi važniji događaji imali prednost pri obradi
+- Postavljanje različitih prioriteta rješava se korištenjem vanjskih prekida `INT0` i `INT1`. Prioritet tih prekida ovisi o hardverskoj konfiguraciji mikrokontrolera, gdje `INT0` ima viši prioritet od `INT1`, što znači da će ISR za `ECHO` biti obrađen prije ISR za `BUTTON2`.
+- Timer prekid `TIMER1` je konfiguriran za treći nivi prioriteta -> izvršava se nakon vanjskih prekida, jer je postavljen an najniži među tri glavna prekida.
+```cpp
+// Vanjski prekidi
+attachInterrupt(digitalPinToInterrupt(BUTTON2), ISR_button2, FALLING); // INT1
+attachInterrupt(digitalPinToInterrupt(ECHO), ISR_sensor, RISING);      // INT0
+```
+      
+- [x] Omogućiti preklapanje prekida (nested interrupts) ako razvojna platforma podržava tu funkcionalnost
+- Dok se obrada jednog prekida vrši, drugi prekid može biti pozvan i odmah obrađen. Za to se koristi funkcija `sei()` unutar ISR-ova, koja omogućava da se prekidi ne blokiraju međusobno.
+```cpp
+// ISR za tipkalo 2 (pokreće slanje ultrazvučnog impulsa) - Srednji prioritet
+void ISR_button2() {
+  sei(); // Omogući nested interrupts
+  // Logika za tipkalo 2
+}
+```
+- `sei()` se koristi unutar ISR-a da omogući "nested interrupts". Ova linija omogućava obradu drugih prekida dok je jedan ISR aktivan, čime se omogućava da važniji prekidi (s višim prioritetom) ne budu blokirani od strane onih s nižim prioritetom.
+
+```cpp
+// ISR za Echo signal s HC-SR04 (detektira reflektirani val) - Najviši prioritet
+void ISR_sensor() {
+  sei(); // Omogući nested interrupts
+  sensor_triggered = true;
+  nested_occurred = true;
+
+...
+
+noInterrupts();
+if (nested_occurred) {
+  processed_nested = true;
+  nested_occurred = false;
+  interrupts();
+  Serial.println("### LOOP: DETEKTIRANO PREKLAPANJE (nested_occurred flag) ###");
+}
+else {
+  interrupts();
+}
+}
+```
+- `nested_occured` flag služi za praćenje situacija kada jedan prekid (npr. `ISR_sensor()`) preklapa drugi prekid (npr. `ISR(TIMER1_COMPA_vect)`). Ovdje je važno da se svi prekidi pravilo obrade bez ometanja važnijih zadataka.
+
+
 
 ##### Efikasno upravljanje resursima  
 - [ ] Spriječiti konflikte pristupa resursima korištenjem odgovarajućih mehanizama (semafori, kritične sekcije, zastavice)  
