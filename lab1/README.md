@@ -1,3 +1,6 @@
+# Github Wiki za više detalja: https://github.com/mdobrini/RUS--Vjezbe/wiki/LAB1
+
+
 ### Upravljanje višestrukim prekidima i njihovim prioritetima  
 
 #### Cilj zadatka  
