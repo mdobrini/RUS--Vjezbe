@@ -36,7 +36,8 @@
       "left": 431.45,
       "rotate": 90,
       "attrs": { "value": "220000" }
-    }
+    },
+    { "type": "wokwi-logic-analyzer", "id": "logic1", "top": 278.75, "left": 537.6, "attrs": {} }
   ],
   "connections": [
     [ "uno:GND.1", "bb1:tn.1", "black", [ "v0" ] ],
@@ -59,10 +60,6 @@
     [ "btn1:2.l", "bb1:3t.b", "", [ "$bb" ] ],
     [ "btn1:1.r", "bb1:5b.g", "", [ "$bb" ] ],
     [ "btn1:2.r", "bb1:3b.g", "", [ "$bb" ] ],
-    [ "led1:A", "bb1:14t.d", "", [ "$bb" ] ],
-    [ "led1:C", "bb1:13t.d", "", [ "$bb" ] ],
-    [ "r3:1", "bb1:14t.e", "", [ "$bb" ] ],
-    [ "r3:2", "bb1:14b.i", "", [ "$bb" ] ],
     [ "btn2:1.l", "bb1:10t.b", "", [ "$bb" ] ],
     [ "btn2:2.l", "bb1:8t.b", "", [ "$bb" ] ],
     [ "btn2:1.r", "bb1:10b.g", "", [ "$bb" ] ],
@@ -70,7 +67,16 @@
     [ "ultrasonic1:VCC", "bb1:27b.i", "", [ "$bb" ] ],
     [ "ultrasonic1:TRIG", "bb1:28b.i", "", [ "$bb" ] ],
     [ "ultrasonic1:ECHO", "bb1:29b.i", "", [ "$bb" ] ],
-    [ "ultrasonic1:GND", "bb1:30b.i", "", [ "$bb" ] ]
+    [ "ultrasonic1:GND", "bb1:30b.i", "", [ "$bb" ] ],
+    [ "led1:A", "bb1:14t.d", "", [ "$bb" ] ],
+    [ "led1:C", "bb1:13t.d", "", [ "$bb" ] ],
+    [ "r3:1", "bb1:14t.e", "", [ "$bb" ] ],
+    [ "r3:2", "bb1:14b.i", "", [ "$bb" ] ],
+    [ "uno:GND.3", "logic1:GND", "black", [ "v28.7", "h176.8" ] ],
+    [ "uno:2", "logic1:D0", "violet", [ "v0" ] ],
+    [ "uno:3", "logic1:D1", "blue", [ "v0" ] ],
+    [ "uno:4", "logic1:D2", "orange", [ "v0" ] ],
+    [ "uno:13", "logic1:D3", "green", [ "v0" ] ]
   ],
   "dependencies": {}
 }
