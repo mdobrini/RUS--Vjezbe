@@ -1,0 +1,5 @@
+<map id="enterSleepMode" name="enterSleepMode">
+<area shape="rect" id="Node000001" title="Ulazak u power&#45;down sleep mode Uključuje watchdog timer i deaktivira ADC radi štednje,..." alt="" coords="104,5,232,31"/>
+<area shape="rect" id="Node000002" href="$da/d98/sketch_8ino.html#afe461d27b9c48d5921c00d521181f12f" title="Glavna petlja programa LED dioda svijetli 5 sekundi, zatim se mikrokontroler uspava do idućeg buđenja..." alt="" coords="5,5,56,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,21,57,21,57,15,90,15"/>
+</map>

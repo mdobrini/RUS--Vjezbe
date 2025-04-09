@@ -1,0 +1,24 @@
+var NAVTREEINDEX0 =
+{
+"da/d98/sketch_8ino.html":[1,0,0],
+"da/d98/sketch_8ino.html#a2cd9f0d96c9cd0637798de3baa7aee60":[1,0,0,7],
+"da/d98/sketch_8ino.html#a43905d6fb5c4d433a49f527fa6ab811f":[1,0,0,2],
+"da/d98/sketch_8ino.html#a476ccd62c199f330f95bce19c498e3e9":[1,0,0,5],
+"da/d98/sketch_8ino.html#a4ddb8b6ae564eb22f7c74f2683a63b8e":[1,0,0,6],
+"da/d98/sketch_8ino.html#a4fc01d736fe50cf5b977f755b675f11d":[1,0,0,4],
+"da/d98/sketch_8ino.html#aa9118fcc53fc3a9ba93842858201533a":[1,0,0,0],
+"da/d98/sketch_8ino.html#ae9c6353b7ababe2622a259d5f71a41ac":[1,0,0,8],
+"da/d98/sketch_8ino.html#afe461d27b9c48d5921c00d521181f12f":[1,0,0,3],
+"da/d98/sketch_8ino.html#afea150fcd685610cb9f7672fce361e53":[1,0,0,1],
+"files.html":[1,0],
+"globals.html":[1,1,0],
+"globals_func.html":[1,1,1],
+"globals_vars.html":[1,1,2],
+"index.html":[],
+"index.html":[0],
+"index.html#autor":[0,3],
+"index.html#funkcionalnosti":[0,1],
+"index.html#konfiguracija":[0,2],
+"index.html#overview":[0,0],
+"pages.html":[]
+};
