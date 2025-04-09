@@ -1,4 +1,4 @@
-#Github Wiki za više detalja: https://github.com/mdobrini/RUS--Vjezbe/wiki/LAB2
+# Github Wiki za više detalja: https://github.com/mdobrini/RUS--Vjezbe/wiki/LAB2
 
 ### Upravljanje potrošnjom energije mikrokontrolera korištenjem Sleep moda  
 
