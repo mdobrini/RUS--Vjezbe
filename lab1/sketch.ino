@@ -10,6 +10,8 @@ volatile bool button2_pressed = false;
 volatile bool sensor_triggered = false;
 volatile bool timer_flag = false;
 volatile bool nested_occurred = false; // Novi flag za detekciju preklapanja
+volatile unsigned long echo_start_time = 0; // Vrijeme početka ECHO signala
+volatile unsigned long echo_duration = 0;   // Trajanje ECHO signala
 
 bool lastButton1State = HIGH;  // Za praćenje stanja tipkala 1
 
@@ -31,8 +33,15 @@ void ISR_button2() {
 // ISR za Echo signal s HC-SR04 (detektira reflektirani val) - Najviši prioritet
 void ISR_sensor() {
   sei(); // Omogući nested interrupts
-
-  sensor_triggered = true;
+  
+  // Ako je ovo RISING edge, počinjemo mjeriti vrijeme
+  if (digitalRead(ECHO) == HIGH) {
+    echo_start_time = micros();
+  } else {
+    // Ako je FALLING edge, računamo trajanje
+    echo_duration = micros() - echo_start_time;
+    sensor_triggered = true;
+  }
 
   // Ako je ovaj ISR pozvan dok je drugi (npr. Timer) bio aktivan,
   // ovo će se postaviti. Provjeravamo u loop().
@@ -46,7 +55,6 @@ ISR(TIMER1_COMPA_vect) {
   sei(); // Omogući nested interrupts (ključno za test)
 
   timer_flag = true; // Signaliziraj loop-u da je vrijeme za toggle LED
-
 }
 
 void setup() {
@@ -54,6 +62,7 @@ void setup() {
   Serial.println("\n--- Arduino Prekidi Test ---");
   Serial.println("Prioriteti (HW): ECHO(INT0) > BUTTON2(INT1) > Timer1");
   Serial.println("Nested interrupts su OMOGUĆENI u ISR-ovima.");
+  Serial.println("Ultrazvučni senzor će ispisivati udaljenost samo kada je < 100cm");
 
   pinMode(BUTTON1, INPUT_PULLUP);
   pinMode(BUTTON2, INPUT_PULLUP);
@@ -64,7 +73,7 @@ void setup() {
 
   // Vanjski prekidi
   attachInterrupt(digitalPinToInterrupt(BUTTON2), ISR_button2, FALLING); // INT1
-  attachInterrupt(digitalPinToInterrupt(ECHO), ISR_sensor, RISING);      // INT0
+  attachInterrupt(digitalPinToInterrupt(ECHO), ISR_sensor, CHANGE);      // INT0, mijenjamo na CHANGE da uhvatimo i rising i falling edge
 
   // Timer1 konfiguracija za LED treptanje (1 Hz)
   cli(); // Isključi prekide tijekom podešavanja
@@ -95,7 +104,6 @@ void loop() {
     interrupts(); // Obavezno omogući prekide i ako flag nije bio postavljen
   }
 
-
   // Tipkalo 1 se čita ručno, za dodatno testiranje
   bool button1State = digitalRead(BUTTON1);
   if (lastButton1State == HIGH && button1State == LOW) {
@@ -103,16 +111,23 @@ void loop() {
   }
   lastButton1State = button1State;
 
-
   // Obrada Echo prekida (reflektirani signal)
   noInterrupts();
   if (sensor_triggered) {
+    // Kopiraj vrijednost u lokalnu varijablu prije resetiranja
+    unsigned long duration = echo_duration;
     sensor_triggered = false; // Resetiraj flag
     interrupts(); // OMOGUĆI PREKIDE
 
-    Serial.println("[PREKID OBRADA] Ultrazvučni senzor detektirao signal (sensor_triggered)!");
-    // Ovdje bi inače išla logika za izračun udaljenosti koristeći micros() itd.
-    // Ali za ovaj test, samo ispisujemo poruku.
+    // Izračunaj udaljenost u centimetrima (brzina zvuka = 343m/s)
+    float distance_cm = duration * 0.0343 / 2; // Pretvori mikrosekunde u centimetre
+    
+    // Ispiši samo ako je udaljenost manja od 100cm
+    if (distance_cm < 100) {
+      Serial.print("[PREKID OBRADA] Ultrazvučni senzor: ");
+      Serial.print(distance_cm);
+      Serial.println(" cm (< 100cm)");
+    }
   } else {
     interrupts();
   }
@@ -127,7 +142,6 @@ void loop() {
   } else {
     interrupts();
   }
-
 
   // Obrada timer prekida - LED treptanje
   noInterrupts();
@@ -144,7 +158,6 @@ void loop() {
     if (processed_nested) {
         Serial.println("    >>> Napomena: Preklapanje (ISR_sensor) detektirano tijekom ovog Timer ciklusa! <<<");
     }
-
   } else {
     interrupts();
   }
